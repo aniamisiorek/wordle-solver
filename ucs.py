@@ -7,11 +7,16 @@
 # We pass a tuple with (new state: [('b', 1, 0), ('a', 1, 1), ('r', 1, 2)], visited letters: [['t', 2, 0], ['x', 1, 1]], cost of word: 4)
 import queue
 
+def load_solutions():
+    with open('wordle_solutions.txt') as solution_file:
+        solutions = set(solution_file.read().split())
+    return solutions
+
 
 class Search:
 
     def __init__(self, solutions):
-        self.solutions = set(solutions)
+        self.solutions = set(load_solutions())
         self.solution_set = len(solutions[0])
 
     """Goal test: Checks whether a word is valid based on the known conditions of the word"""
