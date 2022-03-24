@@ -12,12 +12,13 @@ class Search():
 
     """Checks whether a word is valid based on the known conditions of the word"""
     def valid_words(self, word):
+        pass
 
     """Determines the cost of a word, lower cost means this word is better. Words with higher costs are worse.
     We should be picking a word with letters that are contained in as many solutions as possible. For each letter
     shared with other solutions, +1"""
     def word_cost(self, word):
-
+        pass
 
     def uniformCostSearch(problem):
         """Search the node of least total cost first."""
