@@ -12,12 +12,13 @@ def load_solutions():
         solutions = set(solution_file.read().split())
     return solutions
 
-
 class Search:
 
-    def __init__(self, solutions):
+    def __init__(self, word):
         self.solutions = set(load_solutions())
-        self.solution_set = len(solutions[0])
+        # initial word is "catch" with everything greyed out
+        self.initialState = [('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
+                             set('catch'), set('c', 'a', 't', 'c', 'h')]
 
     """Goal test: Checks whether a word is valid based on the known conditions of the word"""
     def valid_word(self, state):
@@ -29,6 +30,29 @@ class Search:
             return True
         return False
 
+    # checks to see if a possible solution matches with a word descriptor, green should exist in green and yellow should not be in the same spot
+    def check_word(self, word_descriptor, possibleSolution, parentState):
+        # checks if word has been used already
+        if possibleSolution in parentState[1]:
+            return False
+        # checks if letter in possible solution is already used in parent and therefore must be discarded
+        for letter in possibleSolution:
+            if letter in parentState[2]:
+                return False
+        # check if green is in correct spot
+        for letter in range(0, len(possibleSolution)):
+            if parentState[0][letter][1] == 2:
+
+    # input will be a word followed by the feedback in the same format
+    def create_word(word, feedback):
+        # word = 'catch'
+        # feedback = [2 2 2 2 2]
+        word_descriptor = []
+        for position in range(0, len(word)):
+            result = word[position], feedback[position], position
+            word_descriptor.append(result)
+        return word_descriptor
+
     """Determines the cost of a word, lower cost means this word is better. Words with higher costs are worse.
     We should be picking a word with letters that are contained in as many solutions as possible. For each letter
     shared with other solutions, +1"""
@@ -38,10 +62,12 @@ class Search:
     """ Returns a list of words from the solution set that match the given constraints.
     Match green letters, use yellow letters and avoid grey letters.
     """
-    def get_successor(self, state):
-        current_state, visited_set, cost = state
-
-        pass
+    def get_successor(self, word_descriptor):
+        successors = []
+        for possibleSolution in self.solutions:
+            if check_word(word_descriptor, possibleSolution):
+                successors.append(possibleSolution)
+        return successors
 
     def uniformCostSearch(problem):
         """Search the node of least total cost first."""
