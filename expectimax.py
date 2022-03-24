@@ -8,7 +8,7 @@
 import queue
 
 
-class Search():
+class Search:
 
     def __init__(self, solutions):
         self.solutions = set(solutions)
