@@ -15,6 +15,7 @@ def driver():
     valid_solutions = pd.read_csv('data/valid_solutions.csv')
     solution_set = valid_solutions.word.to_list()
     return solution_set
+# comment
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
