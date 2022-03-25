@@ -3,9 +3,10 @@
 # We should keep track of letters and the color feedback received
 # Store preciously used letters with associated feedback and position
 
-# State represented by letter + feedback + position for every letter in the word: [('a', 0, 2), ('i', 0, 2), ('r', 0, 2)]
+# State represented by word + feedback + position for every letter in the word: [('a', 0, 2), ('i', 0, 2), ('r', 0, 2)]
 # We pass a tuple with (new state: [('b', 1, 0), ('a', 1, 1), ('r', 1, 2)], visited letters: [['t', 2, 0], ['x', 1, 1]], cost of word: 4)
 import queue
+import heapq
 
 def load_solutions():
     with open('wordle_solutions.txt') as solution_file:
@@ -16,9 +17,13 @@ class Search:
 
     def __init__(self, word):
         self.solutions = set(load_solutions())
+        # For 5 letters
         # initial word is "catch" with everything greyed out
-        self.initialState = [('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
-                             set('catch'), set('c', 'a', 't', 'c', 'h')]
+        # self.initialState = [('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
+        #                      set('catch'), set('c', 'a', 't', 'c', 'h')]
+        # For 3 letters
+        # initial word is "cat" with everything greyed out
+        self.initialState = self.create_word('cat', [2, 2, 2])
 
     """Goal test: Checks whether a word is valid based on the known conditions of the word"""
     def valid_word(self, state):
@@ -31,22 +36,34 @@ class Search:
         return False
 
     # checks to see if a possible solution matches with a word descriptor, green should exist in green and yellow should not be in the same spot
-    def check_word(self, word_descriptor, possibleSolution, parentState):
+    def check_word(self, possibleSolution, parentState, matches):
         # checks if word has been used already
-        if possibleSolution in parentState[1]:
+        if possibleSolution == self.join_word(parentState):
             return False
-        # checks if letter in possible solution is already used in parent and therefore must be discarded
+        # First obtain green matches from all matches (could be yellow or green)
+        green = []
+        for i in matches:
+            if i[2] == 0:
+                green.append(i)
+        green_letters = self.join_word(green)
+        # checks if letter in possible solution is already used in parent but not green and therefore must be discarded
         for letter in possibleSolution:
-            if letter in parentState[2]:
+            if letter in self.join_word(parentState) and letter not in green_letters:
                 return False
         # check if green is in correct spot
+        # Initialize a counter and look for matches
+        counter = 0
         for letter in range(0, len(possibleSolution)):
-            if parentState[0][letter][1] == 2:
+            if (possibleSolution[letter], 0, letter) in green:
+                counter += 1
+        # Return True if all greens are in the correct spot
+        if counter == len(green):
+            return True
 
     # input will be a word followed by the feedback in the same format
-    def create_word(word, feedback):
-        # word = 'catch'
-        # feedback = [2 2 2 2 2]
+    def create_word(self, word, feedback):
+        # word = 'cat'
+        # feedback = [2 2 2]
         word_descriptor = []
         for position in range(0, len(word)):
             result = word[position], feedback[position], position
@@ -62,31 +79,77 @@ class Search:
     """ Returns a list of words from the solution set that match the given constraints.
     Match green letters, use yellow letters and avoid grey letters.
     """
-    def get_successor(self, word_descriptor):
+    def get_successor(self, parentState, matches):
         successors = []
         for possibleSolution in self.solutions:
-            if check_word(word_descriptor, possibleSolution):
+            if self.check_word(possibleSolution, parentState, matches):
                 successors.append(possibleSolution)
         return successors
 
-    def uniformCostSearch(problem):
+    """ Returns the word as a single string for a guess
+    """
+    def join_word(self, word_descriptor):
+        word = []
+        for i in word_descriptor:
+            word.append(i[0])
+        return ''.join(word)
+
+    def uniformCostSearch(self):
         """Search the node of least total cost first."""
-        "*** YOUR CODE HERE ***"
-        initial_state = problem.getStartState()
-        frontier = queue.PriorityQueue
+        initial_state = self.initialState
+        frontier = PriorityQueue()
         frontier.push(0, (initial_state, [], 0))
         explored = []
 
         while not frontier.isEmpty():
-            state, path, totalCost = frontier.pop()
+            state, matches, totalCost = frontier.pop()
             while state in explored:
-                state, path, totalCost = frontier.pop()
+                state, matches, totalCost = frontier.pop()
             explored.append(state)
-            if problem.isGoalState(state):
-                return path
-            for neighbor in problem.getSuccessors(state):
+            if self.valid_word(state):
+                return self.join_word(state)
+            for neighbor in self.get_successor(state, matches):
                 nextCost = totalCost + neighbor[2]
-                nextNode = (neighbor[0], list(path) + [neighbor[1]], nextCost)
+                nextNode = (neighbor[0], list(matches) + [neighbor[1]], nextCost)
                 if neighbor[0] not in explored:
                     frontier.push(nextNode, nextCost)
 
+
+
+class PriorityQueue:
+    """
+      Implements a priority queue data structure. Each inserted item
+      has a priority associated with it and the client is usually interested
+      in quick retrieval of the lowest-priority item in the queue. This
+      data structure allows O(1) access to the lowest-priority item.
+    """
+    def  __init__(self):
+        self.heap = []
+        self.count = 0
+
+    def push(self, item, priority):
+        entry = (priority, self.count, item)
+        heapq.heappush(self.heap, entry)
+        self.count += 1
+
+    def pop(self):
+        (_, _, item) = heapq.heappop(self.heap)
+        return item
+
+    def isEmpty(self):
+        return len(self.heap) == 0
+
+    def update(self, item, priority):
+        # If item already in priority queue with higher priority, update its priority and rebuild the heap.
+        # If item already in priority queue with equal or lower priority, do nothing.
+        # If item not in priority queue, do the same thing as self.push.
+        for index, (p, c, i) in enumerate(self.heap):
+            if i == item:
+                if p <= priority:
+                    break
+                del self.heap[index]
+                self.heap.append((priority, c, item))
+                heapq.heapify(self.heap)
+                break
+        else:
+            self.push(item, priority)
