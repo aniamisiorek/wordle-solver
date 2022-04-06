@@ -111,8 +111,8 @@ class Search:
             if self.valid_word(state):
                 return self.join_word(state)
             for neighbor in self.get_successor(state, matches):
-                nextCost = totalCost + neighbor[2]
-                nextNode = (neighbor[0], list(matches) + [neighbor[1]], nextCost)
+                nextCost = totalCost + 1 #neighbor[2]
+                nextNode = (neighbor, list(matches) + [neighbor[1]], nextCost)
                 if neighbor[0] not in explored:
                     frontier.push(nextNode, nextCost)
 
