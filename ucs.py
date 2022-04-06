@@ -17,6 +17,7 @@ class Search:
 
     def __init__(self, word):
         self.solutions = set(load_solutions())
+        #print(self.solutions)
         # For 5 letters
         # initial word is "catch" with everything greyed out
         # self.initialState = [('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
@@ -28,10 +29,10 @@ class Search:
     """Goal test: Checks whether a word is valid based on the known conditions of the word"""
     def valid_word(self, state):
         counter = 0
-        for i in range(len(state[0])):
-            if i[0] == 0:
+        for i in state:
+            if i[1] == 0:
                 counter += 1
-        if counter == 3:
+        if counter == len(state):
             return True
         return False
 
@@ -68,6 +69,7 @@ class Search:
         for position in range(0, len(word)):
             result = word[position], feedback[position], position
             word_descriptor.append(result)
+        print(word_descriptor)
         return word_descriptor
 
     """Determines the cost of a word, lower cost means this word is better. Words with higher costs are worse.
@@ -98,7 +100,7 @@ class Search:
         """Search the node of least total cost first."""
         initial_state = self.initialState
         frontier = PriorityQueue()
-        frontier.push(0, (initial_state, [], 0))
+        frontier.push((initial_state, [], 0),1)
         explored = []
 
         while not frontier.isEmpty():
