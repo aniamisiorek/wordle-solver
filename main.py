@@ -7,7 +7,7 @@ from ucs import Search
 
 def return_name():
     search = Search(('catch', [2, 2, 2, 2, 2]))
-    return search.initialState
+    return search.uniformCostSearch()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

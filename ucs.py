@@ -22,9 +22,7 @@ class Search:
         # initial word is "catch" with everything greyed out
         # self.initialState = ('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
         #                      set('catch'), set('c', 'a', 't', 'c', 'h')
-        self.grayLetters = set()
-        self.usedWords = set()
-        self.initialState = self.create_word(word[0], word[1])
+        self.initialState = self.create_word(word[0], word[1], set(), set())
 
     """Goal test: Checks whether a word is valid based on the known conditions of the word"""
     def valid_word(self, state):
@@ -39,7 +37,7 @@ class Search:
     # checks to see if a possible solution matches with a word descriptor, green should exist in green and yellow should not be in the same spot
     def check_word(self, possibleSolution, parentState, matches):
         # checks if word has been used already
-        if possibleSolution == self.join_word(parentState):
+        if parentState[1].contains(possibleSolution):
             return False
         # First obtain green matches from all matches (could be yellow or green)
         green = []
@@ -62,21 +60,22 @@ class Search:
             return True
 
     # input will be a word followed by the feedback in the same format
-    def create_word(self, word, feedback):
+    def create_word(self, word, feedback, usedWords, usedLetters):
         # word = 'catch'
         # feedback = [2 2 2 2 2]
         word_descriptor = []
-        self.usedWords.add(word)
+        usedWords.add(word)
         for position in range(0, len(word)):
             result = word[position], feedback[position], position
             word_descriptor.append(result)
-            self.usedLetters.add(word[position])
-        return word_descriptor, self.usedWords, self.usedLetters
+            if feedback[position] == 2:
+                usedLetters.add(word[position])
+        return word_descriptor, usedWords, usedLetters
 
     """Determines the cost of a word, lower cost means this word is better. Words with higher costs are worse.
     We should be picking a word with letters that are contained in as many solutions as possible. For each letter
     shared with other solutions, +1"""
-    def word_cost(self, word):
+    def word_cost(self):
         return 1
 
     """ Returns a list of words from the solution set that match the given constraints.
