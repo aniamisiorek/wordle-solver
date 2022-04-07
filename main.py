@@ -3,20 +3,14 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
-import pandas as pd
 from ucs import Search
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def return_name():
+    search = Search(('catch', [2, 2, 2, 2, 2]))
+    return search.initialState
 
-def test_run():
-    search = Search('cat')
-    search.uniformCostSearch()
-    return
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    #print_hi('PyCharm')
-    test_run()
+    print(return_name())
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

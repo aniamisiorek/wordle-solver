@@ -20,11 +20,11 @@ class Search:
         #print(self.solutions)
         # For 5 letters
         # initial word is "catch" with everything greyed out
-        # self.initialState = [('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
-        #                      set('catch'), set('c', 'a', 't', 'c', 'h')]
-        # For 3 letters
-        # initial word is "cat" with everything greyed out
-        self.initialState = self.create_word('cat', [2, 2, 2])
+        # self.initialState = ('c', 2, 0), ('a', 2, 1), ('t', 2, 2), ('c', 2, 3), ('h', 2, 4),
+        #                      set('catch'), set('c', 'a', 't', 'c', 'h')
+        self.grayLetters = set()
+        self.usedWords = set()
+        self.initialState = self.create_word(word[0], word[1])
 
     """Goal test: Checks whether a word is valid based on the known conditions of the word"""
     def valid_word(self, state):
@@ -63,14 +63,15 @@ class Search:
 
     # input will be a word followed by the feedback in the same format
     def create_word(self, word, feedback):
-        # word = 'cat'
-        # feedback = [2 2 2]
+        # word = 'catch'
+        # feedback = [2 2 2 2 2]
         word_descriptor = []
+        self.usedWords.add(word)
         for position in range(0, len(word)):
             result = word[position], feedback[position], position
             word_descriptor.append(result)
-        print(word_descriptor)
-        return word_descriptor
+            self.usedLetters.add(word[position])
+        return word_descriptor, self.usedWords, self.usedLetters
 
     """Determines the cost of a word, lower cost means this word is better. Words with higher costs are worse.
     We should be picking a word with letters that are contained in as many solutions as possible. For each letter
