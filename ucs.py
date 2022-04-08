@@ -38,6 +38,9 @@ class Search:
             # added grayed out letters to the used letters
             if feedback[position] == 2:
                 used_letters.add(word[position])
+            elif feedback[position] == 1 or feedback[position] == 0:
+                if used_letters.__contains__(word[position]):
+                    used_letters.remove(word[position])
         return word, word_descriptor, used_words, used_letters
 
     # checks to see if a possible solution matches with a word descriptor, green should exist in green and yellow
@@ -67,14 +70,17 @@ class Search:
                 flag = True
                 for j in range(0, len(possible_solution)):
                     if letter[0] == possible_solution[j]:
-                        new_feedback[i] = 1
-                        flag = False
+                        if new_feedback[j] == 2:
+                            new_feedback[j] = 1
+                            flag = False
+                            break
                 if flag:
                     return None
 
             # checking if any letter in possible solution has already been grayed out
             if parent_state[3].__contains__(possible_solution[i]):
                 return None
+
         new_state = self.create_word(possible_solution, new_feedback, parent_state[2], parent_state[3])
         return new_state
 
