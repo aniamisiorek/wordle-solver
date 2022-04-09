@@ -21,7 +21,7 @@ class Search:
     # word descriptor: for 'catch', [0 1 2 0 1] -> ('c', 0, 0), ('a', 1, 1), ('t', 2, 2), ('c', 0, 3), ('h', 1, 4)
     def __init__(self, word):
         self.solutions = set(load_solutions())
-        self.initial_state = self.create_word(word[0], word[1], set(), set())
+        self.initial_state = self.create_word(word[0], word[1], set(word[2]), set())
 
     # Creates a state for a solution given the word and its feedback. Readjusts the used words and letters accordingly.
     def create_word(self, word, feedback, used_words, used_letters):
