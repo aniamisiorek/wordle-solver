@@ -1,11 +1,12 @@
-from ucs import Search
+from ucs import Search, State
 
 
 # Returns the best word from UCS.
 def return_word():
     # running our algorithm on blank input returns 'prude', therefore we will use this word
-    search = Search(('shake', [0,0,0,2,0],['shave']))
+    search = Search(('piper', [2, 2, 2, 0, 0], []))
     return search.ucs_result()
+
 
 def start_game():
     print('Welcome to Wordle!')
@@ -23,7 +24,6 @@ def start_game():
         i += 1
 
     print('Well done! See u at the next game :)')
-
 
 
 # Press the green button in the gutter to run the script.
