@@ -32,7 +32,7 @@ class Search:
             state, path, total_cost = frontier.pop()
             while state in explored:
                 state, path, total_cost = frontier.pop()
-                print(explored)
+                #print(explored)
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:

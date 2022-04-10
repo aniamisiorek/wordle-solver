@@ -14,7 +14,7 @@ def start_game():
     i = 1
     used_words = []
     while user_keep.lower() != 'no':
-        a = 'Attempt ' + str(i) + ', enter your guess:'
+        a = 'Attempt ' + str(i) + ', enter your guess: '
         user_input = str(input(a))
         user_feedback = [int(item) for item in input("Enter the feedback values: ").split()]
         search = Search((user_input, user_feedback, used_words))
@@ -28,5 +28,5 @@ def start_game():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print(return_word())
-    #start_game()
+    #print(return_word())
+    start_game()
