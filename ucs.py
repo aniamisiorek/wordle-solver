@@ -43,9 +43,40 @@ class Search:
                 if new_word not in explored:
                     frontier.push(next_node, next_cost)
 
+    # Performs A* search on the Wordle state space.
+    def a_star_search(self):
+        initial_state = self.initial_state
+        frontier = PriorityQueue()
+        frontier.push((initial_state, [], 0), 0)
+        explored = []
+
+        while not frontier.isEmpty():
+            state, path, total_cost = frontier.pop()
+            while state in explored:
+                state, path, total_cost = frontier.pop()
+                # print(explored)
+            explored.append(state)
+            successors = state.get_successors(self)
+            if len(successors) == 0:
+                return path
+            for new_word in successors:
+                #print(heuristic(new_word.word))
+                next_cost = total_cost + 1 + heuristic_successors(successors)
+                next_node = new_word, list(path) + [new_word.word], next_cost
+                if new_word not in explored:
+                    frontier.push(next_node, next_cost)
+
     # Returns the result from UCS and accounts for mistypes in the user input.
     def ucs_result(self):
         path = self.uniform_cost_search()
+        if len(path) == 0:
+            return "Could not find valid word! Double check your input."
+        else:
+            return path[0]
+
+    # Returns the result from UCS and accounts for mistypes in the user input.
+    def astar_result(self):
+        path = self.a_star_search()
         if len(path) == 0:
             return "Could not find valid word! Double check your input."
         else:
@@ -150,6 +181,19 @@ class State:
                 successors.append(new_state)
         return successors
 
+
+# Returns the heuristic value associated to the state
+# In this case we will be using the number of repeated letters
+def heuristic_counts(w):
+    counts = [w.count(i) for i in set(w)]
+    h = 0
+    for i in counts:
+        if i > 1:
+            h += 1
+    return h
+
+def heuristic_successors(successor_list):
+    return len(successor_list)
 
 # Priority Queue data structure used in UCS.
 class PriorityQueue:
