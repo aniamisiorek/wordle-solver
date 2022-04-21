@@ -69,7 +69,6 @@ def get_feedback(guess, solution):
     fb = []
     for t in tiles:
         fb.add(t[1])
-
     return fb
 
 
@@ -81,6 +80,7 @@ def test(iterations):
     # s = Search(('11111', [2, 2, 2, 2, 2], []))
     # guess_ucs = s.ucs_result()
     for i in range(iterations):
+        print('Iteration ', i, '\n')
         guess_ucs = 'start'
         print('guess 1 ucs', guess_ucs)
         used_words = []
@@ -127,9 +127,10 @@ def test(iterations):
 
 
 # Creates a graph representing the distribution of UCS and A* search
-def plot_distributions(ucs, astar, iterations):
+def plot_distributions(astar, iterations):
     sns.set_style("white")
 
+<<<<<<< HEAD
     labels = ['UCS'] * iterations + ['A*'] * iterations
 
     data = pd.DataFrame(list(zip(labels, ucs + astar)), columns=['algorithm', 'attempt'])
@@ -139,6 +140,15 @@ def plot_distributions(ucs, astar, iterations):
     plt.ylabel('Count')
     plt.title('Distribution of correct guesses')
     plt.xticks([0, 1, 2, 3, 4])
+=======
+    bins = np.arange(9) - 0.5
+    plt.hist(astar, bins = bins, alpha=0.5, label='A*', color='cadet blue')
+    plt.xlabel('Attempt')
+    plt.ylabel('Count')
+    plt.title('Distribution of correct guesses')
+    plt.xticks(range(8))
+    plt.legend(loc='best')
+>>>>>>> 86063eee82954d052a931fa6537e7bd8d75a31bb
     plt.show()
 
 
@@ -146,9 +156,18 @@ def plot_distributions(ucs, astar, iterations):
 if __name__ == '__main__':
     # print(return_word())
     # start_game_astar()
+<<<<<<< HEAD
     results_ucs, results_astar = test(20)
     print('ucs: ', results_ucs)
     print('astar: ', results_astar)
     ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     astar = [0, 2, 1, 3, 1, 3, 1, 2]
     plot_distributions(results_ucs, results_astar, len(results_astar))
+=======
+    results_ucs, results_astar = test(30)
+    print('astar: ', results_astar)
+    # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
+    # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
+    # plot_distributions(astar, len(astar))
+    plot_distributions(results_astar, len(results_astar))
+>>>>>>> 86063eee82954d052a931fa6537e7bd8d75a31bb
