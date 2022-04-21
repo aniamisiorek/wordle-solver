@@ -48,12 +48,16 @@ def start_game_astar():
 
 # Gets the feedback for a guess according to the passed solution. IN PROGRESS
 def get_feedback(guess, solution):
-    fb = [2,2,2,2,2]
+    fb = [2, 2, 2, 2, 2]
+    w = []
     for i in range(len(guess)):
-        if guess[i] in solution:
-            fb[i] = 1
+        w.append(guess[i])
         if guess[i] == solution[i]:
             fb[i] = 0
+            w.remove(guess[i])
+        if guess[i] in solution and guess[i] in w:
+            fb[i] = 1
+            w.remove(guess[i])
     return fb
 
 # Runs a test on both UCS and A* to compare the efficiency of the search functions
@@ -64,6 +68,7 @@ def test(iterations):
     #s = Search(('11111', [2, 2, 2, 2, 2], []))
     #guess_ucs = s.ucs_result()
     for i in range(iterations):
+        print('Iteration ', i, '\n')
         guess_ucs = 'start'
         print('guess 1 ucs', guess_ucs)
         used_words = []
@@ -109,27 +114,26 @@ def test(iterations):
     return results_ucs, results_astar
 
 # Creates a graph representing the distribution of UCS and A* search
-def plot_distributions(ucs, astar, iterations):
+def plot_distributions(astar, iterations):
     sns.set_style("white")
 
-    labels = ['UCS']*iterations + ['A*']*iterations
-
-    data = pd.DataFrame(list(zip(labels, ucs+astar)), columns = ['algorithm', 'attempt'])
-
-    sns.displot(data, x='attempt', hue='algorithm',alpha=0.4, fill=True, aspect=1.5)
+    bins = np.arange(9) - 0.5
+    plt.hist(astar, bins = bins, alpha=0.5, label='A*', color='cadet blue')
     plt.xlabel('Attempt')
     plt.ylabel('Count')
     plt.title('Distribution of correct guesses')
-    plt.xticks([0,1,2,3,4])
+    plt.xticks(range(8))
+    plt.legend(loc='best')
     plt.show()
+
 
 # Main function
 if __name__ == '__main__':
-    #print(return_word())
-    #start_game_astar()
-    results_ucs, results_astar = test(20)
-    print('ucs: ',results_ucs)
-    print('astar: ',results_astar)
-    ucs = [2,3,4,3,1,3,1,2]
-    astar = [0, 2, 1, 3, 1, 3, 1, 2]
-    plot_distributions(results_ucs, results_astar, len(results_astar))
+    # print(return_word())
+    # start_game_astar()
+    results_ucs, results_astar = test(30)
+    print('astar: ', results_astar)
+    # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
+    # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
+    # plot_distributions(astar, len(astar))
+    plot_distributions(results_astar, len(results_astar))
