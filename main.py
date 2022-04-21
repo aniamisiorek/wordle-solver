@@ -12,6 +12,7 @@ def return_word():
     search = Search(('11111', [2, 2, 2, 2, 2], []))
     return search.astar_result()
 
+
 # Starts a Wordle game that is operated by UCS
 def start_game_ucs():
     print('Welcome to Wordle!')
@@ -27,6 +28,7 @@ def start_game_ucs():
         user_keep = str(input('Do you want to keep playing?: '))
         used_words.append(user_input)
         i += 1
+
 
 # Starts a Wordle game that is operated by A*
 def start_game_astar():
@@ -46,29 +48,44 @@ def start_game_astar():
 
     print('Well done! See u at the next game :)')
 
+
 # Gets the feedback for a guess according to the passed solution. IN PROGRESS
 def get_feedback(guess, solution):
-    fb = [2,2,2,2,2]
-    for i in range(len(guess)):
-        if guess[i] in solution:
-            fb[i] = 1
+    tiles = [[guess[0], 2], [guess[1], 2], [guess[2], 2], [guess[3], 2], [guess[4], 2]]
+
+    # First pass (find the letters in the correct spot)
+    for i in range(0, len(guess)):
         if guess[i] == solution[i]:
-            fb[i] = 0
+            tiles[i][1] = 0
+
+    # Second pass (find the present letters that are NOT marked green elsewhere)
+    for i in range(0, len(guess)):
+        if guess[i] != solution[i] and solution.__contains__(guess[i]):
+            for t in range(0, len(tiles)):
+                if tiles[t] == guess[i] and tiles[t][1] == 2:
+                    tiles[t][1] == 1
+                    break
+
+    fb = []
+    for t in tiles:
+        fb.add(t[1])
+
     return fb
+
 
 # Runs a test on both UCS and A* to compare the efficiency of the search functions
 def test(iterations):
     solution_set = list(load_solutions())
     results_ucs = []
     results_astar = []
-    #s = Search(('11111', [2, 2, 2, 2, 2], []))
-    #guess_ucs = s.ucs_result()
+    # s = Search(('11111', [2, 2, 2, 2, 2], []))
+    # guess_ucs = s.ucs_result()
     for i in range(iterations):
         guess_ucs = 'start'
         print('guess 1 ucs', guess_ucs)
         used_words = []
         solution_word = random.choice(solution_set)
-        print('solution',solution_word)
+        print('solution', solution_word)
         attempt = 1
         while guess_ucs != solution_word:
             attempt += 1
@@ -81,7 +98,7 @@ def test(iterations):
             if guess_ucs == 'Could not find valid word! Double check your input.':
                 attempt = 0
                 break
-            print('guess: ',guess_ucs)
+            print('guess: ', guess_ucs)
             used_words.append(guess_ucs)
 
         results_ucs.append(attempt)
@@ -108,28 +125,30 @@ def test(iterations):
 
     return results_ucs, results_astar
 
+
 # Creates a graph representing the distribution of UCS and A* search
 def plot_distributions(ucs, astar, iterations):
     sns.set_style("white")
 
-    labels = ['UCS']*iterations + ['A*']*iterations
+    labels = ['UCS'] * iterations + ['A*'] * iterations
 
-    data = pd.DataFrame(list(zip(labels, ucs+astar)), columns = ['algorithm', 'attempt'])
+    data = pd.DataFrame(list(zip(labels, ucs + astar)), columns=['algorithm', 'attempt'])
 
-    sns.displot(data, x='attempt', hue='algorithm',alpha=0.4, fill=True, aspect=1.5)
+    sns.displot(data, x='attempt', hue='algorithm', alpha=0.4, fill=True, aspect=1.5)
     plt.xlabel('Attempt')
     plt.ylabel('Count')
     plt.title('Distribution of correct guesses')
-    plt.xticks([0,1,2,3,4])
+    plt.xticks([0, 1, 2, 3, 4])
     plt.show()
+
 
 # Main function
 if __name__ == '__main__':
-    #print(return_word())
-    #start_game_astar()
+    # print(return_word())
+    # start_game_astar()
     results_ucs, results_astar = test(20)
-    print('ucs: ',results_ucs)
-    print('astar: ',results_astar)
-    ucs = [2,3,4,3,1,3,1,2]
+    print('ucs: ', results_ucs)
+    print('astar: ', results_astar)
+    ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     astar = [0, 2, 1, 3, 1, 3, 1, 2]
     plot_distributions(results_ucs, results_astar, len(results_astar))
