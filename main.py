@@ -62,7 +62,7 @@ def get_feedback(guess, solution):
     for i in range(0, len(guess)):
         if guess[i] != solution[i] and solution.__contains__(guess[i]):
             for t in range(0, len(tiles)):
-                if tiles[t] == guess[i] and tiles[t][1] == 2:
+                if tiles[t][0] == guess[i] and tiles[t][1] == 2:
                     tiles[t][1] == 1
                     break
 
