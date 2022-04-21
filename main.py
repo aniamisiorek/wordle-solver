@@ -12,6 +12,7 @@ def return_word():
     search = Search(('11111', [2, 2, 2, 2, 2], []))
     return search.astar_result()
 
+# Starts a Wordle game that is operated by UCS
 def start_game_ucs():
     print('Welcome to Wordle!')
     user_keep = 'yes'
@@ -27,6 +28,7 @@ def start_game_ucs():
         used_words.append(user_input)
         i += 1
 
+# Starts a Wordle game that is operated by A*
 def start_game_astar():
     print('Welcome to Wordle!')
     user_keep = 'yes'
@@ -44,6 +46,7 @@ def start_game_astar():
 
     print('Well done! See u at the next game :)')
 
+# Gets the feedback for a guess according to the passed solution. IN PROGRESS
 def get_feedback(guess, solution):
     fb = [2,2,2,2,2]
     for i in range(len(guess)):
@@ -53,6 +56,7 @@ def get_feedback(guess, solution):
             fb[i] = 0
     return fb
 
+# Runs a test on both UCS and A* to compare the efficiency of the search functions
 def test(iterations):
     solution_set = list(load_solutions())
     results_ucs = []
@@ -104,7 +108,7 @@ def test(iterations):
 
     return results_ucs, results_astar
 
-
+# Creates a graph representing the distribution of UCS and A* search
 def plot_distributions(ucs, astar, iterations):
     sns.set_style("white")
 
@@ -119,7 +123,7 @@ def plot_distributions(ucs, astar, iterations):
     plt.xticks([0,1,2,3,4])
     plt.show()
 
-# Press the green button in the gutter to run the script.
+# Main function
 if __name__ == '__main__':
     #print(return_word())
     #start_game_astar()

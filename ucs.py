@@ -1,6 +1,4 @@
 # Green, yellow and gray as feedback ( 0 - green, 1 - yellow, 2 - grey )
-# We should keep track of letters and the color feedback received
-# Store previously used letters with associated feedback and position
 import heapq
 
 
@@ -11,17 +9,19 @@ def load_solutions():
     return solutions
 
 
-# Represents a search problem that describes the game 'Wordle'. Each instance is initialized with the guess from a user.
+# Represents a search problem that describes the game 'Wordle'. Each search problem is initialized with a guess from
+# a user. This guess will form the initial state space.
 class Search:
 
     # constructor: tuple with input[0] being a string that represents a guess
     #                         input[1] being the feedback for this guess
+    #                         input[2] being the previously used words (to avoid repetition)
 
     def __init__(self, word):
         self.solutions = set(load_solutions())
         self.initial_state = State((word[0], word[1], set(word[2]), set()))
 
-    # Performs uniform cost search on the Wordle state space.
+    # Performs uniform cost search on the user's guess, returning the word with the shortest path
     def uniform_cost_search(self):
         initial_state = self.initial_state
         frontier = PriorityQueue()
@@ -32,7 +32,6 @@ class Search:
             state, path, total_cost = frontier.pop()
             while state in explored:
                 state, path, total_cost = frontier.pop()
-                #print(explored)
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
@@ -43,7 +42,8 @@ class Search:
                 if new_word not in explored:
                     frontier.push(next_node, next_cost)
 
-    # Performs A* search on the Wordle state space.
+    # Performs A* search on the Wordle state space, returning the word with the shortest path.
+    # Uses a heuristic where words with less successors are explored first
     def a_star_search(self):
         initial_state = self.initial_state
         frontier = PriorityQueue()
@@ -54,13 +54,11 @@ class Search:
             state, path, total_cost = frontier.pop()
             while state in explored:
                 state, path, total_cost = frontier.pop()
-                # print(explored)
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
                 return path
             for new_word in successors:
-                #print(heuristic(new_word.word))
                 next_cost = total_cost + 1 + heuristic_successors(successors)
                 next_node = new_word, list(path) + [new_word.word], next_cost
                 if new_word not in explored:
@@ -74,7 +72,7 @@ class Search:
         else:
             return path[0]
 
-    # Returns the result from UCS and accounts for mistypes in the user input.
+    # Returns the result from A* and accounts for mistypes in the user input.
     def astar_result(self):
         path = self.a_star_search()
         if len(path) == 0:
@@ -95,6 +93,8 @@ class State:
         self.used_words = state_params[2]
         self.used_letters = state_params[3]
 
+    # Returns whether two states are equal. A state is equal to another iff they are composed of the same word, have
+    # the same feedback, and have the same used words and letters
     def __eq__(self, other):
         return self.word == other.word and self.word_descriptor == other.word_descriptor and \
                self.used_words == other.used_words and self.used_letters == other.used_letters
@@ -182,8 +182,9 @@ class State:
         return successors
 
 
-# Returns the heuristic value associated to the state
-# In this case we will be using the number of repeated letters
+# HEURISTICS #
+
+# Number of repeated letters
 def heuristic_counts(w):
     counts = [w.count(i) for i in set(w)]
     h = 0
@@ -192,8 +193,11 @@ def heuristic_counts(w):
             h += 1
     return h
 
+
+# Numbers of successors
 def heuristic_successors(successor_list):
     return len(successor_list)
+
 
 # Priority Queue data structure used in UCS.
 class PriorityQueue:
