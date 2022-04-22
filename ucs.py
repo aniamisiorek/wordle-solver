@@ -59,7 +59,7 @@ class Search:
             if len(successors) == 0:
                 return path
             for new_word in successors:
-                next_cost = total_cost + 1 + heuristic_successors(successors)
+                next_cost = total_cost + 1 + heuristic_successors(successors,self.solutions)
                 next_node = new_word, list(path) + [new_word.word], next_cost
                 if new_word not in explored:
                     frontier.push(next_node, next_cost)
@@ -195,8 +195,8 @@ def heuristic_counts(w):
 
 
 # Numbers of successors
-def heuristic_successors(successor_list):
-    return len(successor_list)
+def heuristic_successors(successor_list, solutions_list):
+    return len(successor_list)/len(solutions_list)
 
 
 # Priority Queue data structure used in UCS.

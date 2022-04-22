@@ -54,16 +54,16 @@ def get_feedback(guess, solution):
     tiles = [[guess[0], 2], [guess[1], 2], [guess[2], 2], [guess[3], 2], [guess[4], 2]]
 
     # First pass (find the letters in the correct spot)
-    for i in range(0, len(guess)):
+    for i in range(len(guess)):
         if guess[i] == solution[i]:
             tiles[i][1] = 0
 
     # Second pass (find the present letters that are NOT marked green elsewhere)
-    for i in range(0, len(guess)):
+    for i in range(len(guess)):
         if guess[i] != solution[i] and solution.__contains__(guess[i]):
-            for t in range(0, len(tiles)):
+            for t in range(len(tiles)):
                 if tiles[t][0] == guess[i] and tiles[t][1] == 2:
-                    tiles[t][1] == 1
+                    tiles[t][1] = 1
                     break
 
     fb = []
@@ -112,6 +112,7 @@ def test(iterations):
             if attempt == 7:
                 break
             feedback = get_feedback(guess_astar, solution_word)
+            print('fb: ', feedback)
             search = Search((guess_astar, feedback, used_words))
             guess_astar = search.astar_result()
             if guess_astar == 'Could not find valid word! Double check your input.':
@@ -131,8 +132,10 @@ def test(iterations):
 def plot_distributions(astar, iterations):
     sns.set_style("white")
 
+    new_astar = [i for i in astar if i != 0]
+
     bins = np.arange(9) - 0.5
-    plt.hist(astar, bins = bins, alpha=0.5, label='A*', color='cadetblue')
+    plt.hist(new_astar, bins = bins, alpha=0.5, label='A*', color='cadetblue')
     plt.xlabel('Attempt')
     plt.ylabel('Count')
     plt.title('Distribution of correct guesses')
@@ -145,7 +148,7 @@ def plot_distributions(astar, iterations):
 if __name__ == '__main__':
     # print(return_word())
     # start_game_astar()
-    results_astar = test(30)
+    results_astar = test(50)
     print('astar: ', results_astar)
     # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
