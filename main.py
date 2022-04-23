@@ -51,25 +51,33 @@ def start_game_astar():
 
 # Gets the feedback for a guess according to the passed solution. IN PROGRESS
 def get_feedback(guess, solution):
-    tiles = [[guess[0], 2], [guess[1], 2], [guess[2], 2], [guess[3], 2], [guess[4], 2]]
+    feedback = [2,2,2,2,2]
+    counted_positions = set()
 
     # First pass (find the letters in the correct spot)
     for i in range(len(guess)):
         if guess[i] == solution[i]:
-            tiles[i][1] = 0
+            feedback[i] = 0
+            counted_positions.add(i)
 
     # Second pass (find the present letters that are NOT marked green elsewhere)
     for i in range(len(guess)):
-        if guess[i] != solution[i] and solution.__contains__(guess[i]):
-            for t in range(len(tiles)):
-                if tiles[t][0] == guess[i] and tiles[t][1] == 2:
-                    tiles[t][1] = 1
+        if solution.__contains__(guess[i]) and feedback[i] != 0:
+            positions = find_positions(guess[i], solution)
+            for p in positions:
+                if p not in counted_positions:
+                    feedback[i] = 1
+                    counted_positions.add(p)
                     break
+    return feedback
 
-    fb = []
-    for t in tiles:
-        fb.append(t[1])
-    return fb
+def find_positions(char, solution):
+    positions = []
+    for i in range(len(solution)):
+        if solution[i] == char:
+            positions.append(i)
+
+    return positions
 
 
 # Runs a test on both UCS and A* to compare the efficiency of the search functions
@@ -106,7 +114,7 @@ def test(iterations):
         # guess_astar = s.astar_result()
         guess_astar = 'raise'
         print('guess  1 astar', guess_astar)
-        used_words = []
+        used_words = ['raise']
         attempt = 1
         while guess_astar != solution_word:
             if attempt == 7:
@@ -148,7 +156,7 @@ def plot_distributions(astar, iterations):
 if __name__ == '__main__':
     # print(return_word())
     # start_game_astar()
-    results_astar = test(50)
+    results_astar = test(1000)
     print('astar: ', results_astar)
     # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]

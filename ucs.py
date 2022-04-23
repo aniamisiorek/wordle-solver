@@ -19,7 +19,15 @@ class Search:
 
     def __init__(self, word):
         self.solutions = set(load_solutions())
-        self.initial_state = State((word[0], word[1], set(word[2]), set()))
+        self.initial_state = State((word[0], word[1], set(word[2]), set(self.get_letters(word[2]))))
+
+    def get_letters(self, word_list):
+        result = set()
+        for word in word_list:
+            for letter in word:
+                result.add(letter)
+
+        return result
 
     # Performs uniform cost search on the user's guess, returning the word with the shortest path
     def uniform_cost_search(self):
