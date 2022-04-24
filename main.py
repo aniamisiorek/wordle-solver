@@ -112,9 +112,9 @@ def test(iterations):
         # results_ucs.append(attempt)
         # for astar
         # guess_astar = s.astar_result()
-        guess_astar = 'raise'
+        guess_astar = 'crane'
         print('guess  1 astar', guess_astar)
-        used_words = ['raise']
+        used_words = ['crane']
         attempt = 1
         while guess_astar != solution_word:
             if attempt == 7:
@@ -156,7 +156,7 @@ def plot_distributions(astar, iterations):
 if __name__ == '__main__':
     # print(return_word())
     # start_game_astar()
-    results_astar = test(1000)
+    results_astar = test(100)
     print('astar: ', results_astar)
     # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
