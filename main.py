@@ -112,9 +112,9 @@ def test(iterations):
         # results_ucs.append(attempt)
         # for astar
         # guess_astar = s.astar_result()
-        guess_astar = 'crane'
+        guess_astar = 'raise'
         print('guess  1 astar', guess_astar)
-        used_words = ['crane']
+        used_words = ['raise']
         attempt = 1
         while guess_astar != solution_word:
             if attempt == 7:
@@ -140,7 +140,8 @@ def test(iterations):
 def plot_distributions(astar, iterations):
     sns.set_style("white")
 
-    new_astar = [i for i in astar if i != 0]
+    # Mark as not guessed words that we are not able to reach a match between word and feedback
+    new_astar = [7 for i in astar if i == 0]
 
     bins = np.arange(9) - 0.5
     plt.hist(new_astar, bins = bins, alpha=0.5, label='A*', color='cadetblue')
@@ -154,12 +155,12 @@ def plot_distributions(astar, iterations):
 
 # Main function
 if __name__ == '__main__':
-    # print(return_word())
+    print(return_word())
     # start_game_astar()
-    results_astar = test(100)
-    print('astar: ', results_astar)
+    # results_astar = test(100)
+    # print('astar: ', results_astar)
     # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
     # plot_distributions(astar, len(astar))
-    plot_distributions(results_astar, len(results_astar))
+    # plot_distributions(results_astar, len(results_astar))
 
