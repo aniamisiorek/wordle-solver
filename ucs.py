@@ -29,21 +29,24 @@ class Search:
 
         return result
 
-    # Performs uniform cost search on the user's guess, returning the word with the shortest path
+    # Performs Uniform Cost Search on the user's guess, returning the word with the shortest path
     def uniform_cost_search(self):
         initial_state = self.initial_state
         frontier = PriorityQueue()
         frontier.push((initial_state, [], 0), 0)
         explored = []
+        expanded_nodes = 0
 
         while not frontier.isEmpty():
             state, path, total_cost = frontier.pop()
+            expanded_nodes += 1
             while state in explored:
                 state, path, total_cost = frontier.pop()
+                expanded_nodes += 1
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
-                return path
+                return path, expanded_nodes
             for new_word in successors:
                 next_cost = total_cost + 1
                 next_node = new_word, list(path) + [new_word.word], next_cost
@@ -51,21 +54,23 @@ class Search:
                     frontier.push(next_node, next_cost)
 
     # Performs A* search on the Wordle state space, returning the word with the shortest path.
-    # Uses a heuristic where words with less successors are explored first
     def a_star_search(self):
         initial_state = self.initial_state
         frontier = PriorityQueue()
         frontier.push((initial_state, [], 0), 0)
         explored = []
+        expanded_nodes = 0
 
         while not frontier.isEmpty():
             state, path, total_cost = frontier.pop()
+            expanded_nodes += 1
             while state in explored:
                 state, path, total_cost = frontier.pop()
+                expanded_nodes += 1
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
-                return path
+                return path, expanded_nodes
             for new_word in successors:
                 next_cost = total_cost + 1 + heuristic_successors(successors,self.solutions)
                 next_node = new_word, list(path) + [new_word.word], next_cost
@@ -73,20 +78,30 @@ class Search:
                     frontier.push(next_node, next_cost)
 
     # Returns the result from UCS and accounts for mistypes in the user input.
-    def ucs_result(self):
+    def ucs_path(self):
         path = self.uniform_cost_search()
         if len(path) == 0:
             return "Could not find valid word! Double check your input."
         else:
-            return path[0]
+            return path[0][0]
 
     # Returns the result from A* and accounts for mistypes in the user input.
-    def astar_result(self):
+    def astar_path(self):
         path = self.a_star_search()
         if len(path) == 0:
             return "Could not find valid word! Double check your input."
         else:
-            return path[0]
+            return path[0][0]
+
+    # Returns the number of expanded nodes from running UCS.
+    def ucs_expanded_nodes(self):
+        path = self.uniform_cost_search()
+        return path[1]
+
+    # Returns the number of expanded nodes from running A*.
+    def astar_expanded_nodes(self):
+        path = self.a_star_search()
+        return path[1]
 
 
 # Represents a state for a Wordle game. A State contains a word in string format, word descriptor(described below),

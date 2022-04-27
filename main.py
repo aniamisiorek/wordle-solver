@@ -6,14 +6,14 @@ import numpy as np
 import pandas as pd
 
 
-# Returns the best word from UCS.
+# Returns the best word from A*.
 def return_word():
     # running our algorithm on blank input returns 'prude', therefore we will use this word
-    search = Search(('11111', [2, 2, 2, 2, 2], []))
-    return search.astar_result()
+    search = Search(('piper', [2, 2, 2, 1, 1], []))
+    return search.astar_expanded_nodes()
 
 
-# Starts a Wordle game that is operated by UCS
+# Simulates Wordle gameplay using results from UCS
 def start_game_ucs():
     print('Welcome to Wordle!')
     user_keep = 'yes'
@@ -24,13 +24,13 @@ def start_game_ucs():
         user_input = str(input(a))
         user_feedback = [int(item) for item in input("Enter the feedback values: ").split()]
         search = Search((user_input, user_feedback, used_words))
-        print('Try: ', search.ucs_result())
+        print('Try: ', search.ucs_path())
         user_keep = str(input('Do you want to keep playing?: '))
         used_words.append(user_input)
         i += 1
 
 
-# Starts a Wordle game that is operated by A*
+# Simulates Wordle gameplay using results from A*
 def start_game_astar():
     print('Welcome to Wordle!')
     user_keep = 'yes'
@@ -41,7 +41,7 @@ def start_game_astar():
         user_input = str(input(a))
         user_feedback = [int(item) for item in input("Enter the feedback values: ").split()]
         search = Search((user_input, user_feedback, used_words))
-        print('Try: ', search.astar_result())
+        print('Try: ', search.astar_path())
         user_keep = str(input('Do you want to keep playing?: '))
         used_words.append(user_input)
         i += 1
@@ -49,9 +49,9 @@ def start_game_astar():
     print('Well done! See u at the next game :)')
 
 
-# Gets the feedback for a guess according to the passed solution. IN PROGRESS
+# Gets the feedback for a guess according to the passed solution.
 def get_feedback(guess, solution):
-    feedback = [2,2,2,2,2]
+    feedback = [2, 2, 2, 2, 2]
     counted_positions = set()
 
     # First pass (find the letters in the correct spot)
@@ -71,6 +71,8 @@ def get_feedback(guess, solution):
                     break
     return feedback
 
+
+# Finds the positions of a letter
 def find_positions(char, solution):
     positions = []
     for i in range(len(solution)):
@@ -102,7 +104,7 @@ def test(iterations):
         #         break
         #     feedback = get_feedback(guess_ucs, solution_word)
         #     search = Search((guess_ucs, feedback, used_words))
-        #     guess_ucs = search.ucs_result()
+        #     guess_ucs = search.ucs_path()
         #     if guess_ucs == 'Could not find valid word! Double check your input.':
         #         attempt = 0
         #         break
@@ -111,7 +113,7 @@ def test(iterations):
 
         # results_ucs.append(attempt)
         # for astar
-        # guess_astar = s.astar_result()
+        # guess_astar = s.astar_path()
         guess_astar = 'raise'
         print('guess  1 astar', guess_astar)
         used_words = ['raise']
@@ -122,7 +124,7 @@ def test(iterations):
             feedback = get_feedback(guess_astar, solution_word)
             print('fb: ', feedback)
             search = Search((guess_astar, feedback, used_words))
-            guess_astar = search.astar_result()
+            guess_astar = search.astar_path()
             if guess_astar == 'Could not find valid word! Double check your input.':
                 attempt = 0
                 break
@@ -144,7 +146,7 @@ def plot_distributions(astar, iterations):
     new_astar = [7 for i in astar if i == 0]
 
     bins = np.arange(9) - 0.5
-    plt.hist(new_astar, bins = bins, alpha=0.5, label='A*', color='cadetblue')
+    plt.hist(new_astar, bins=bins, alpha=0.5, label='A*', color='cadetblue')
     plt.xlabel('Attempt')
     plt.ylabel('Count')
     plt.title('Distribution of correct guesses')
@@ -163,4 +165,3 @@ if __name__ == '__main__':
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
     # plot_distributions(astar, len(astar))
     # plot_distributions(results_astar, len(results_astar))
-
