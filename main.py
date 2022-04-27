@@ -157,11 +157,11 @@ def plot_distributions(astar, iterations):
 
 # Main function
 if __name__ == '__main__':
-    print(return_word())
+    # print(return_word())
     # start_game_astar()
-    # results_astar = test(100)
-    # print('astar: ', results_astar)
+    results_astar = test(500)
+    print('astar: ', results_astar)
     # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
     # plot_distributions(astar, len(astar))
-    # plot_distributions(results_astar, len(results_astar))
+    plot_distributions(results_astar, len(results_astar))
