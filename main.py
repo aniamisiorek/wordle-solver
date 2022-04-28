@@ -4,6 +4,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import pandas as pd
+import signal
+
+class TimeoutException(Exception):
+    pass
+
+def timeout_handler(signum, frame):
+    raise TimeoutException
 
 
 # Returns the best word from A*.
@@ -124,8 +131,19 @@ def test(iterations):
             feedback = get_feedback(guess_astar, solution_word)
             print('fb: ', feedback)
             search = Search((guess_astar, feedback, used_words))
-            guess_astar = search.astar_path()
+            signal.signal(signal.SIGALRM, timeout_handler)
+            try:
+                guess_astar = search.astar_path()
+                signal.alarm(30)
+            except TimeoutException:
+                print('function terminated')
+                attempt = 7
+                break
+            # guess_astar = search.astar_path()
             if guess_astar == 'Could not find valid word! Double check your input.':
+                attempt = 0
+                break
+            if type(guess_astar) != str:
                 attempt = 0
                 break
             print('guess: ', guess_astar)
@@ -159,7 +177,7 @@ def plot_distributions(astar, iterations):
 if __name__ == '__main__':
     # print(return_word())
     # start_game_astar()
-    results_astar = test(500)
+    results_astar = test(1000)
     print('astar: ', results_astar)
     # ucs = [2, 3, 4, 3, 1, 3, 1, 2]
     # astar = [0, 2, 1, 3, 1, 3, 1, 2, 5, 3, 4, 1, 2, 7, 7, 6, 5, 3]
