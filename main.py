@@ -122,9 +122,9 @@ def test(iterations):
         # results_ucs.append(attempt)
         # for astar
         # guess_astar = s.astar_path()
-        guess_astar = 'raise'
+        guess_astar = 'crane'
         print('guess  1 astar', guess_astar)
-        used_words = ['raise']
+        used_words = ['crane']
         attempt = 1
         terminated = False
         while guess_astar != solution_word:

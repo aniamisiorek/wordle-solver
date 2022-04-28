@@ -34,15 +34,11 @@ class Search:
         initial_state = self.initial_state
         frontier = PriorityQueue()
         frontier.push((initial_state, [], 0), 0)
-        explored = []
         expanded_nodes = 0
 
         while not frontier.isEmpty():
             state, path, total_cost = frontier.pop()
             expanded_nodes += 1
-            while state in explored:
-                state, path, total_cost = frontier.pop()
-                expanded_nodes += 1
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
@@ -50,23 +46,18 @@ class Search:
             for new_word in successors:
                 next_cost = total_cost + 1
                 next_node = new_word, list(path) + [new_word.word], next_cost
-                if new_word not in explored:
-                    frontier.push(next_node, next_cost)
+                frontier.push(next_node, next_cost)
 
     # Performs A* search on the Wordle state space, returning the word with the shortest path.
     def a_star_search(self):
         initial_state = self.initial_state
         frontier = PriorityQueue()
         frontier.push((initial_state, [], 0), 0)
-        explored = []
         expanded_nodes = 0
 
         while not frontier.isEmpty():
             state, path, total_cost = frontier.pop()
             expanded_nodes += 1
-            while state in explored:
-                state, path, total_cost = frontier.pop()
-                expanded_nodes += 1
             explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
@@ -74,8 +65,7 @@ class Search:
             for new_word in successors:
                 next_cost = total_cost + 1 + heuristic_successors(successors,self.solutions)
                 next_node = new_word, list(path) + [new_word.word], next_cost
-                if new_word not in explored:
-                    frontier.push(next_node, next_cost)
+                frontier.push(next_node, next_cost)
 
     # Returns the result from UCS and accounts for mistypes in the user input.
     def ucs_path(self):
