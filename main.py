@@ -96,7 +96,8 @@ def test(iterations):
     results_astar = []
     # s = Search(('11111', [2, 2, 2, 2, 2], []))
     # guess_ucs = s.ucs_result()
-    for i in range(iterations):
+    i = 0
+    while i<(iterations):
         print('Iteration ', i, '\n')
         # guess_ucs = 'start'
         # print('guess 1 ucs', guess_ucs)
@@ -125,6 +126,7 @@ def test(iterations):
         print('guess  1 astar', guess_astar)
         used_words = ['raise']
         attempt = 1
+        terminated = False
         while guess_astar != solution_word:
             if attempt == 7:
                 break
@@ -137,7 +139,7 @@ def test(iterations):
                 signal.alarm(30)
             except TimeoutException:
                 print('function terminated')
-                attempt = 7
+                terminated = True
                 break
             # guess_astar = search.astar_path()
             if guess_astar == 'Could not find valid word! Double check your input.':
@@ -150,7 +152,11 @@ def test(iterations):
             used_words.append(guess_astar)
             print('attempt astar', attempt)
             attempt += 1
-        results_astar.append(attempt)
+        if terminated:
+            print('here')
+        else:
+            results_astar.append(attempt)
+            i += 1
 
     # return results_ucs, results_astar
     return results_astar
@@ -161,10 +167,12 @@ def plot_distributions(astar, iterations):
     sns.set_style("white")
 
     # Mark as not guessed words that we are not able to reach a match between word and feedback
-    new_astar = [7 for i in astar if i == 0]
+    for i in range(iterations):
+        if astar[i] == 0:
+            astar[i] = 7
 
     bins = np.arange(9) - 0.5
-    plt.hist(new_astar, bins=bins, alpha=0.5, label='A*', color='cadetblue')
+    plt.hist(astar, bins, label='A*', color='cadetblue')
     plt.xlabel('Attempt')
     plt.ylabel('Count')
     plt.title('Distribution of correct guesses')
