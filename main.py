@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import signal
 
+# Timeout functions
 class TimeoutException(Exception):
     pass
 
@@ -98,7 +99,7 @@ def test(iterations):
     # guess_ucs = s.ucs_result()
     i = 0
     while i<(iterations):
-        print('Iteration ', i, '\n')
+        print('Iteration ', i)
         # guess_ucs = 'start'
         # print('guess 1 ucs', guess_ucs)
         # used_words = []
@@ -122,40 +123,40 @@ def test(iterations):
         # results_ucs.append(attempt)
         # for astar
         # guess_astar = s.astar_path()
-        guess_astar = 'crane'
+        guess_astar = 'raise'
         print('guess  1 astar', guess_astar)
-        used_words = ['crane']
+        used_words = ['raise']
         attempt = 1
         terminated = False
         while guess_astar != solution_word:
+            # Cast as attempt 7 everything after 6
             if attempt == 7:
                 break
             feedback = get_feedback(guess_astar, solution_word)
             print('fb: ', feedback)
             search = Search((guess_astar, feedback, used_words))
+            # Start signal for timeout after 30 seconds
             signal.signal(signal.SIGALRM, timeout_handler)
             try:
                 guess_astar = search.astar_path()
                 signal.alarm(30)
             except TimeoutException:
                 print('function terminated')
+                # If 30 seconds elapsed we redo the iteration
                 terminated = True
                 break
             # guess_astar = search.astar_path()
             if guess_astar == 'Could not find valid word! Double check your input.':
                 attempt = 0
                 break
-            if type(guess_astar) != str:
-                attempt = 0
-                break
+
             print('guess: ', guess_astar)
             used_words.append(guess_astar)
             print('attempt astar', attempt)
             attempt += 1
-        if terminated:
-            print('here')
-        else:
+        if not terminated:
             results_astar.append(attempt)
+            print('\n')
             i += 1
 
     # return results_ucs, results_astar

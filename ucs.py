@@ -39,7 +39,7 @@ class Search:
         while not frontier.isEmpty():
             state, path, total_cost = frontier.pop()
             expanded_nodes += 1
-            explored.append(state)
+            #explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
                 return path, expanded_nodes
@@ -58,7 +58,7 @@ class Search:
         while not frontier.isEmpty():
             state, path, total_cost = frontier.pop()
             expanded_nodes += 1
-            explored.append(state)
+            #explored.append(state)
             successors = state.get_successors(self)
             if len(successors) == 0:
                 return path, expanded_nodes
@@ -108,9 +108,9 @@ class State:
 
     # Returns whether two states are equal. A state is equal to another iff they are composed of the same word, have
     # the same feedback, and have the same used words and letters
-    def __eq__(self, other):
-        return self.word == other.word and self.word_descriptor == other.word_descriptor and \
-               self.used_words == other.used_words and self.used_letters == other.used_letters
+    # def __eq__(self, other):
+    #     return self.word == other.word and self.word_descriptor == other.word_descriptor and \
+    #            self.used_words == other.used_words and self.used_letters == other.used_letters
 
     # Creates a state for a solution given the word and its feedback. Readjusts the used words and letters accordingly.
     def create_word(self, word, feedback, used_words, used_letters):
